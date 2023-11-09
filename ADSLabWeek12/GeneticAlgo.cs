@@ -3,7 +3,6 @@ using System.Data;
 
 public class GeneticAlgo
 {
-
     public void runGA(int generations, List<double> data)
     {
         //Write your experiment here
@@ -146,6 +145,3 @@ public class Population
     }
 
 }
-
-
-// List<Order> SortedList = objListOrder.OrderBy(o=>o.OrderDate).ToList();
