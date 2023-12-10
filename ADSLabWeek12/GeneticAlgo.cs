@@ -1,16 +1,50 @@
-using System.Collections.Generic;  
-using System.Data;  
+using System.Data;
 
 public class GeneticAlgo
 {
     public void runGA(int generations, List<double> data)
     {
-        //Write your experiment here
+        //Create initial population
+        
+        //Sort the population based on their fitness values
+       
+
+        //For results
+        //A 2D array of size generatons (row), col-0:generation, col-1:p1, col-2:p2, col-3:c1, col-4:c2, col-5:mutant
+        //Create a list of list to store the best chromosome for each generation
+
+        //We are going to use this crossover strategy. The crossover prob. is reducing by generation
+        double crossOverProb = 0.9;
+        double coRate = 0.9/generations;
+
+        //Loop until number of generation
+        for(int i=0; i<generations; i++)
+        {
+            Console.WriteLine("Generation "+i);
+           
+            //Write values to results for generation number, fitness for parents, and the solutions (the chromosome)
+
+            //Produce 2 children using the crossOver method. The method will return a list of Individuals
+
+            //Produce a mutant. Create an Individual from the best parent, the mutate their genes. Use copyIndividual and mutation for this operation.
+
+            //Add the new candidates to the population, i.e., child 1, child 2, and mutant. Use addCandidates method.
+        
+            //Sort the population after the new candidates join the population
+
+            //Reduce the crossover probability
+            crossOverProb -= coRate;
+
+            
+        }
+
+        //Write results to csv files: writeFitnessResults, writeSolutions, writePopulation
+
     }
 }
 public class Individual
 {
-    public List<int> individual;
+    public List<int> chromosome;
     public double fitness;
     public List<Double> data = new List<double>();
 
@@ -18,18 +52,30 @@ public class Individual
     {
         Random r = new Random();
         data = dataset;
-        individual = new List<int>();
+        chromosome = new List<int>();
         for (int i=0; i<dataset.Count; i++)
         {
-            int gene = r.Next(0,2);
-            individual.Add(gene);
+            int gene = r.Next(1,9999)%2;
+            chromosome.Add(gene);
         }
         calCurrentFit();
     }
 
     public void calCurrentFit()
     {
-        //complete this method
+        fitness = 0;
+        double left=0, right=0;
+        for(int i=0; i<chromosome.Count; i++)
+        {
+            if(chromosome[i]==0){
+                left+=data[i];
+                // Console.WriteLine("Left "+currenSol[i]);
+            }else{
+                right+=data[i];
+                // Console.WriteLine("Right "+currenSol[i]);
+            }
+        }
+        fitness = Math.Round(Math.Abs(left-right),2);
     }
 
     public double getFitness()
@@ -39,37 +85,36 @@ public class Individual
     }
 
     //This method is to avoid from the object gets the reference.
-    public Individual deepCopy()
+    public Individual copyIndividual()
     {
         Individual other = (Individual)this.MemberwiseClone();  
-        other.individual = new (individual);  
+        other.chromosome = new (chromosome);  
         other.fitness = fitness;  
         return other;  
     }
 
-    
-    public void mutation (double rate)
+    public void mutation (double prob)
     {
         Random r = new Random();
        
-        if (rate>1.0)
+        if (prob>1.0)
         {
-            Console.WriteLine("Rate should be between 0 and 1");
+            Console.WriteLine("Probability should be between 0 and 1");
             return;
         }
         else
         {
-            //complete this part
+            //Complete this section!
         }
         calCurrentFit();
     }
 
     public void printIndividual()
     {
-        for (int i=0; i<individual.Count; i++)
+        for (int i=0; i<chromosome.Count; i++)
         {
-            Console.Write(individual[i]);
-            if (i<individual.Count-1)
+            Console.Write(chromosome[i]);
+            if (i<chromosome.Count-1)
                 Console.Write(",");
         }
         Console.WriteLine("  "+fitness);
@@ -78,39 +123,34 @@ public class Individual
 
 public class Population
 {
-    List<Individual> pop = new List<Individual>();
-    List<Individual> parents = new List<Individual>();
+    public List<Individual> pop = new List<Individual>();
 
-    public Population(int popSize, List<double> data)
+    public Population(int n, List<double> data)
     {
-        for(int i=0; i<popSize; i++)
+        for(int i=0; i<n; i++)
         {
             Individual ind = new Individual(data);
             pop.Add(ind);
         }
         sortPopulation();
-        identifyParents();
-    
     }
 
-    public void identifyParents()
-    {
-        for (int i=0; i<2; i++)
-        {
-            parents.Add(pop[i]);
-        }
-    }
 
     public List<Individual> getParents ()
     {
+        List<Individual> parents = new List<Individual>();
+        for (int i=0; i<2; i++)
+        {
+            parents.Add(pop[i]); //We pick the first 2 individual from pop
+        }
         return parents;
     }
 
     public void printParents()
     {
-        for (int i=0; i<parents.Count; i++)
+        for (int i=0; i<2; i++)
         {
-            parents[i].printIndividual();
+            pop[i].printIndividual();  //We pick the first 2 individual from pop
         }
     }
     public void addCandidates(Individual c1, Individual c2, Individual mutant)
@@ -126,15 +166,23 @@ public class Population
         pop = res.ToList();
     }
 
-    // public Individual getBestIndividual()
-    // {
-    //     //complete this method
-    // }
+    public Individual getBestIndividual()
+    {
+        Individual best = pop[0];
+        return best;
+    }
 
-    // public List<Individual> crossOver (double coRate, List<Individual> parents)
-    // {
-    //      //complete this method
-    // }
+    public List<Individual> crossOver (double coProb)
+    {
+        Individual newCandidates1 = pop[0].copyIndividual(); //getting the genes from parent 1
+        Individual newCandidates2 = pop[1].copyIndividual(); //getting the genes from parent 2
+        List<Individual> res = new List<Individual>(); //We need this to store 2 children (of class Individual)
+
+        //Complete this method based on Algorithm 2: One Point Crossover
+
+
+        return res; //There are 2 individuals in this variable
+    }
 
     public void printPopulation()
     {
@@ -145,3 +193,5 @@ public class Population
     }
 
 }
+
+//©ZairulMazwan©
